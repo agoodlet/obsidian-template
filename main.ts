@@ -24,25 +24,22 @@ export default class InsertLinkPlugin extends Plugin {
 				new Notice("Was not a git branch");
 			 };
         };
+		
 		const create = (path: string) => {
-			// const fm = new FileManager;
-			// const absolutePath = vault.getAbstractFileByPath('tasks/CCP-761');
-			editor.replaceRange(vaultName(), editor.getCursor());
-		}
+			const files = this.app.vault.getMarkdownFiles();
+				for (let i = 0; i < files.length; i++){
+					// const test = this.app.vault.getNewFileParent(files[i].path);
+					editor.replaceRange(files[i].path, editor.getCursor());
+				}
+			}
         new InsertLinkModal(this.app, onSubmit, create).open();
       },
     });
 
-	 // This adds a status bar item to the bottom of the app. Does not work on mobile apps.
+	//ur mum lol
 	 const statusBarItemEl = this.addStatusBarItem();
 	 statusBarItemEl.setText('ur mum');
   }
-}
-
-function vaultName() {
-	const vault = new Vault;
-	const name = vault.getName();
-	return "test";
 
 }
 
