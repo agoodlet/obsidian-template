@@ -26,15 +26,20 @@ export default class InsertTaskPlugin extends Plugin {
 						const template = `# ${title}
 
 ## Brief
-		
+
 ## Possible Situations
-				
+
 ## Other parts of the app this could effect`;
 
 						const files = this.app.vault.getMarkdownFiles();
 						const test = this.app.fileManager.getNewFileParent(files[1].path);
-						this.app.vault.create(`${test.path}${id}.md`, template);
-
+						const finalPath = test.path !== '/' ? `${test.path}/` : test.path;
+						try {
+							this.app.vault.create(`${finalPath}${id}.md`, template);
+							new Notice(`created ${finalPath}${id}.md`);
+						} catch {
+							new Notice(`Could not create ${finalPath}${id}.md`)
+						}
 					} else {
 						new Notice("Was not a git branch");
 					};
