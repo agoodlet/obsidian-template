@@ -1,19 +1,15 @@
 import { App, Modal, Setting } from "obsidian";
 
-export class InsertLinkModal extends Modal {
-  linkText: string;
+export class InsertTaskModal extends Modal {
   linkUrl: string;
 
-  onSubmit: (linkUrl: string) => void;
   create: (path: string) => void;
 
   constructor(
     app: App,
-    onSubmit: (linkUrl: string) => void,
     create: (path: string) => void
   ) {
     super(app);
-    this.onSubmit = onSubmit;
     this.create = create;
   }
 
@@ -30,21 +26,11 @@ export class InsertLinkModal extends Modal {
 
     new Setting(contentEl).addButton((btn) =>
       btn
-        .setButtonText("Insert")
-        .setCta()
-        .onClick(() => {
-          this.close();
-          this.onSubmit(this.linkUrl);
-        })
-    );
-
-    new Setting(contentEl).addButton((btn) =>
-      btn
         .setButtonText("create")
         .setCta()
         .onClick(() => {
           this.close();
-          this.create("path");
+          this.create(this.linkUrl);
         })
     );
   }
