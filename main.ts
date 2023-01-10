@@ -26,10 +26,17 @@ export default class InsertTaskPlugin extends Plugin {
 						const template = `# ${title}
 
 ## Brief
+**Succinct rewrite of the task in own words to better understand the task**
 
 ## Possible Situations
+**What are all the possible situations that someone can encounter relative to the task**
 
-## Other parts of the app this could effect`;
+- situation_1
+- situation_2
+
+## Other parts of the app this could effect
+**Is there any other aspect of the app that could be effected by the changes made**
+`;
 
 						const files = this.app.vault.getMarkdownFiles();
 						const test = this.app.fileManager.getNewFileParent(files[1].path);
