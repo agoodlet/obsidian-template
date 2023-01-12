@@ -3,6 +3,21 @@ import { InsertTaskModal } from "./modal";
 
 export default class InsertTaskPlugin extends Plugin {
 	async onload() {
+
+		//add command for current date heading
+		this.addCommand({
+			id: "insert-date",
+			name: "Insert Date",
+			editorCallback: (editor: Editor) => {
+				const options: object = { weekday: "short" };
+				const curDate = new Date;
+				const day = new Intl.DateTimeFormat("en-US", options).format(curDate);
+				const date = curDate.toLocaleDateString('en-GB', {timeZone: "GMT"});
+				editor.replaceRange(`## ${day}-${date}`, editor.getCursor());
+			}
+		})
+
+		//add command for template
 		this.addCommand({
 			id: "insert-link",
 			name: "Insert link",
@@ -22,16 +37,16 @@ export default class InsertTaskPlugin extends Plugin {
 						// maybe find a way to obfuscate this template to another file
 						const template = `# ${title}
 
-## Brief
+### Brief
 **Succinct rewrite of the task in own words to better understand the task**
 
-## Possible Situations
+### Possible Situations
 **What are all the possible situations that someone can encounter relative to the task**
 
 - situation_1
 - situation_2
 
-## Other parts of the app this could effect
+### Other parts of the app this could effect
 **Is there any other aspect of the app that could be effected by the changes made**
 `;
 
