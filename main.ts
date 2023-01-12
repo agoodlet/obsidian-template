@@ -23,9 +23,8 @@ export default class InsertTaskPlugin extends Plugin {
 			name: "Insert link",
 			editorCallback: (editor: Editor) => {
 				const create = (url: string) => {
-					if (/^(feature|Improvement|hotfix|bugfix|master)\//g.test(url)) {
-						const regex: RegExp = /((?<=((Improvement|feature|hotfix|bugfix)\/))([a-zA-Z]{1,4})\-\d*)|((?<=\d\-).*)/g;
-						const matches = [...url.matchAll(regex)];
+					if (/^(feature|(I|i)mprovement|hotfix|bugfix|master)\//g.test(url)) {
+						const matches = [...url.matchAll(/((?<=(((I|i)mprovement|feature|hotfix|bugfix)\/))([a-zA-Z]{1,4})\-\d*)|((?<=\d\-).*)/g)];
 
 						// pulling out the title and the ID so they are easier to work with
 						const title = matches[1][0].replace(/\-/g, ' ');
@@ -34,7 +33,7 @@ export default class InsertTaskPlugin extends Plugin {
 						// add the line to the main tracker
 						editor.replaceRange(`[[${id}]] - ${titleCase(title)}`, editor.getCursor());
 
-						// maybe find a way to obfuscate this template to another file
+						// TODO: maybe find a way to obfuscate this template to another file
 						const template = `# ${title}
 
 ### Brief
@@ -53,8 +52,9 @@ export default class InsertTaskPlugin extends Plugin {
 						const files = this.app.vault.getMarkdownFiles();
 						const fileParent = this.app.fileManager.getNewFileParent(files[1].path);
 						const finalPath = fileParent.path !== '/' ? `${fileParent.path}/${id}.md` : `${fileParent.path}${id}.md`;
+						new Notice(`${finalPath}`)
 						try {
-							this.app.vault.create(`${finalPath}${id}.md`, template);
+							this.app.vault.create(`${finalPath}`, template);
 							new Notice(`created ${finalPath}${id}.md`);
 						} catch {
 							new Notice(`Could not create ${finalPath}${id}.md`)
