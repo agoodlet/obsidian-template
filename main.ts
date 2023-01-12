@@ -55,9 +55,9 @@ export default class InsertTaskPlugin extends Plugin {
 						new Notice(`${finalPath}`)
 						try {
 							this.app.vault.create(`${finalPath}`, template);
-							new Notice(`created ${finalPath}${id}.md`);
+							new Notice(`created ${finalPath}`);
 						} catch {
-							new Notice(`Could not create ${finalPath}${id}.md`)
+							new Notice(`Could not create ${finalPath}`)
 						}
 					} else {
 						new Notice("Was not a git branch");
