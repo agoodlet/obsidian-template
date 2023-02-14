@@ -23,16 +23,26 @@ export default class InsertTaskPlugin extends Plugin {
 			name: "Insert link",
 			editorCallback: (editor: Editor) => {
 				const create = (url: string) => {
-					if (/^(feature|(I|i)mprovement|hotfix|bugfix|master)\//g.test(url)) {
-						const matches = [...url.matchAll(/((?<=(((I|i)mprovement|feature|hotfix|bugfix)\/))([a-zA-Z]{1,4})\-\d*)|((?<=\d\-).*)/g)];
+					let title = "";
+					let id = "";
+					if (/^(feature|(I|i)mprovement|hotfix|bug|bugfix|master)\//g.test(url)) {
+						const matches = [...url.matchAll(/((?<=(((I|i)mprovement|feature|hotfix|bug|bugfix)\/))([a-zA-Z]{1,4})\-\d*)|((?<=\d\-).*)/g)];
 
 						// pulling out the title and the ID so they are easier to work with
-						const title = matches[1][0].replace(/\-/g, ' ');
-						const id = matches[0][0];
+						title = matches[1][0].replace(/\-/g, ' ');
+						id = matches[0][0];
 
 						// add the line to the main tracker
 						editor.replaceRange(`[[${id}]] - ${titleCase(title)}`, editor.getCursor());
 
+					} else {
+						const matches = [...url.matchAll(/(([a-zA-Z]{1,4})\-\d*)|((?<=\d\-).*)/g)];
+
+						title = matches[1][0];
+						id = matches[0][0];
+
+						editor.replaceRange(`[[${id}]] - ${titleCase(title)}`, editor.getCursor());
+					}
 						// TODO: maybe find a way to obfuscate this template to another file
 						const template = `# ${title}
 
@@ -59,10 +69,7 @@ export default class InsertTaskPlugin extends Plugin {
 						} catch {
 							new Notice(`Could not create ${finalPath}`)
 						}
-					} else {
-						new Notice("Was not a git branch");
-					};
-				}
+					}
 				new InsertTaskModal(this.app, create).open();
 			},
 		});
