@@ -12,7 +12,7 @@ export default class InsertTaskPlugin extends Plugin {
 				const options: object = { weekday: "short" };
 				const curDate = new Date;
 				const day = new Intl.DateTimeFormat("en-US", options).format(curDate);
-				const date = curDate.toLocaleDateString('en-GB', {timeZone: "GMT"});
+				const date = curDate.toLocaleDateString('en-GB', {timeZone: "Australia/Sydney"});
 				editor.replaceRange(`## ${day}-${date}`, editor.getCursor());
 			}
 		})
