@@ -1,17 +1,18 @@
 import { Editor, Notice, Plugin, FileManager, Vault } from "obsidian";
 import { InsertTaskModal } from "./modal";
+import * as fs from "fs";
 
 export default class InsertTaskPlugin extends Plugin {
 	async onload() {
-
+		var template = getTemplateFromDir("templates_mine");
+		console.log(template);
 		//add command for current date heading
 		this.addCommand({
 			id: "insert-date",
 			name: "Insert Date",
 			editorCallback: (editor: Editor) => {
-				const options: object = { weekday: "short" };
 				const curDate = new Date;
-				const day = new Intl.DateTimeFormat("en-US", options).format(curDate);
+				const day = new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(curDate);
 				const date = curDate.toLocaleDateString('en-GB', {timeZone: "Australia/Sydney"});
 				editor.replaceRange(`## ${day}-${date}`, editor.getCursor());
 			}
@@ -44,21 +45,22 @@ export default class InsertTaskPlugin extends Plugin {
 						editor.replaceRange(`[[${id}]] - ${titleCase(title)}`, editor.getCursor());
 					}
 						// TODO: maybe find a way to obfuscate this template to another file
-						const template = `# ${title}
+// 						const template = `# ${title}
 
-### Brief
-**Succinct rewrite of the task in own words to better understand the task**
+// ### Brief
+// **Succinct rewrite of the task in own words to better understand the task**
 
-### Possible Situations
-**What are all the possible situations that someone can encounter relative to the task**
+// ### Possible Situations
+// **What are all the possible situations that someone can encounter relative to the task**
 
-- situation_1
-- situation_2
+// - situation_1
+// - situation_2
 
-### Other parts of the app this could effect
-**Is there any other aspect of the app that could be effected by the changes made**
-`;
+// ### Other parts of the app this could effect
+// **Is there any other aspect of the app that could be effected by the changes made**
+// `;
 
+						// TODO abstract the process of getting the path to it's own function
 						const files = this.app.vault.getMarkdownFiles();
 						const fileParent = this.app.fileManager.getNewFileParent(files[1].path);
 						const finalPath = fileParent.path !== '/' ? `${fileParent.path}/${id}.md` : `${fileParent.path}${id}.md`;
@@ -73,12 +75,20 @@ export default class InsertTaskPlugin extends Plugin {
 				new InsertTaskModal(this.app, create).open();
 			},
 		});
-
 		// add 'ur mum' to the status bar at the bottom lol
 		const statusBarItemEl = this.addStatusBarItem();
 		statusBarItemEl.setText('ur mum');
 	}
 
+}
+
+// TODO abstract the process of getting the path to it's own function
+function getTemplateFromDir(dir: String){
+	const templateFolder = this.app.vault.getAbstractFileByPath(dir);
+	var templatePath = this.app.vault.getResourcePath(templateFolder.children[0]);
+	templatePath = templatePath.split("?")[0].substr(12);
+	const template = fs.readFileSync(templatePath).toString();
+	return template;
 }
 
 function titleCase(str: string) {
